@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -16,7 +15,7 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
-    chunkSizeWarningLimit: 3000, // Aumenta o limite para silenciar avisos de chunks grandes
+    chunkSizeWarningLimit: 3000, 
     rollupOptions: {
       output: {
         manualChunks: {
