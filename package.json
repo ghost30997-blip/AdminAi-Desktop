@@ -1,0 +1,51 @@
+{
+  "name": "slidex-desktop",
+  "version": "1.0.0",
+  "description": "Mala Direta Profissional para PowerPoint e Word",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "package": "electron-builder"
+  },
+  "author": "Slidex Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.slidex.app",
+    "productName": "Slidex",
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Slidex",
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "runAfterFinish": true
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "App.tsx",
+      "index.tsx",
+      "types.ts",
+      "components/**/*",
+      "utils/**/*",
+      "services/**/*",
+      "public/**/*",
+      "metadata.json"
+    ],
+    "directories": {
+      "output": "dist_electron"
+    }
+  }
+}

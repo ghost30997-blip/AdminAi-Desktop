@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slidex - Mala Direta Profissional</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                orange: '#FF5722',
+                blue: '#0052CC',
+                dark: '#172B4D',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+      body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: #f4f5f7; 
+        margin: 0;
+        overflow: hidden;
+      }
+      .dark body { background-color: #172B4D; }
+
+      /* Splash screen nativa */
+      #root:empty {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: #172B4D;
+      }
+      #root:empty::before {
+        content: "";
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(255,255,255,0.1);
+        border-top-color: #FF5722;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.473.0?external=react",
+    "xlsx": "https://esm.sh/xlsx@0.18.5",
+    "jszip": "https://esm.sh/jszip@3.10.1",
+    "idb": "https://esm.sh/idb@8.0.0",
+    "jspdf": "https://esm.sh/jspdf@2.5.1",
+    "jspdf-autotable": "https://esm.sh/jspdf-autotable@3.8.2?external=jspdf",
+    "@google/genai": "https://esm.sh/@google/genai@1.3.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Ponto de entrada via ESM nativo que o Electron/Vite entende sem Babel standalone -->
+    <script type="module" src="./index.tsx"></script>
+  </body>
+</html>
