@@ -1,15 +1,13 @@
 
 {
-  "name": "slidex-desktop",
-  "version": "1.1.0",
-  "description": "Mala Direta Profissional para PowerPoint e Word com IA",
-  "main": "main.js",
+  "name": "slidex-web",
+  "version": "1.2.0",
+  "description": "Plataforma Web de Mala Direta Profissional para PowerPoint e Word com IA",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "start": "electron .",
-    "package": "electron-builder"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.0.0",
@@ -24,8 +22,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^30.0.0",
-    "electron-builder": "^24.13.3",
     "vite": "^5.4.11"
   }
 }

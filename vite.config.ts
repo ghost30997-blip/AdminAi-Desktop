@@ -2,25 +2,25 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './', // CRITICAL: Garante que os caminhos sejam relativos para funcionar no protocolo file:// do Electron
+  base: '/', // Padrão para hospedagem na Web (Vercel)
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-utils': ['xlsx', 'jszip', 'jspdf']
+          'react-core': ['react', 'react-dom'],
+          'document-utils': ['xlsx', 'jszip', 'jspdf', 'jspdf-autotable']
         }
       }
     }
   },
   server: {
-    port: 5173,
+    port: 3000,
     strictPort: true
   }
 });
