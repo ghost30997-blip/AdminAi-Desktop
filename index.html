@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slidex - Mala Direta Profissional</title>
+    <title>Slidex - Mala Direta & Automação</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -34,28 +34,28 @@
       }
       .dark body { background-color: #172B4D; }
 
-      /* Splash screen nativa */
-      #root:empty {
-        width: 100vw;
-        height: 100vh;
+      /* Loader de inicialização profissional */
+      #app-loader {
+        position: fixed;
+        inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: white;
         background: #172B4D;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
       }
-      #root:empty::before {
-        content: "";
-        width: 48px;
-        height: 48px;
+      .spinner {
+        width: 40px;
+        height: 40px;
         border: 4px solid rgba(255,255,255,0.1);
         border-top-color: #FF5722;
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin-bottom: 20px;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
+      .loaded #app-loader { opacity: 0; pointer-events: none; }
     </style>
 
     <script type="importmap">
@@ -78,8 +78,18 @@
 </script>
   </head>
   <body>
+    <div id="app-loader">
+        <div class="spinner"></div>
+        <p style="color: white; margin-top: 16px; font-weight: 600; font-size: 14px;">Carregando Slidex...</p>
+    </div>
     <div id="root"></div>
-    <!-- Ponto de entrada via ESM nativo que o Electron/Vite entende sem Babel standalone -->
+    <script type="module">
+        // Pequeno script para remover o loader após o React montar
+        window.addEventListener('load', () => {
+            // O React demora um pouco para hidratar
+            setTimeout(() => document.body.classList.add('loaded'), 1000);
+        });
+    </script>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
