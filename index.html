@@ -7,6 +7,12 @@
     <title>Slidex | Mala Direta Profissional Web</title>
     <meta name="description" content="Automação de documentos PowerPoint e Word com IA e integração Google Drive.">
     
+    <!-- Polyfills básicos para evitar tela branca por erro de variável global -->
+    <script>
+      window.global = window;
+      window.process = { env: { API_KEY: "" }, version: "", nextTick: function(f) { f(); } };
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -80,9 +86,11 @@
   <body>
     <div id="app-loader">
         <div class="spinner"></div>
-        <p style="color: white; margin-top: 16px; font-weight: 600; font-size: 14px;">Carregando Slidex...</p>
+        <p style="color: white; margin-top: 16px; font-weight: 600; font-size: 14px;">Iniciando Slidex...</p>
     </div>
+    
     <div id="root"></div>
+
     <script type="module">
         window.addEventListener('load', () => {
             setTimeout(() => {
@@ -92,11 +100,23 @@
                     setTimeout(() => loader.remove(), 500);
                 }
                 document.body.classList.add('loaded');
-            }, 800);
+            }, 500);
         });
+        
+        // Captura de erro para ajudar no debug caso a tela continue branca
+        window.onerror = function(msg, url, line) {
+            console.error("Erro Detectado: " + msg + " em " + url + ":" + line);
+            const loader = document.getElementById('app-loader');
+            if(loader) {
+                const p = loader.querySelector('p');
+                if(p) p.innerHTML = "Erro ao carregar aplicação. Verifique o console.";
+            }
+        };
     </script>
-    <!-- Vite gerencia este import durante o build -->
-    <script type="module" src="/index.tsx"></script>
+
+    <!-- O Vite transformará este arquivo durante o build -->
+    <script type="module" src="./index.tsx"></script>
+    
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </body>

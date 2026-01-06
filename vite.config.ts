@@ -6,22 +6,22 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   define: {
-    // Define apenas as variáveis necessárias para evitar o erro "process is not defined"
-    // e permitir que o SDK do Gemini acesse a API_KEY injetada pela plataforma.
-    'process.env': {
-      API_KEY: JSON.stringify(process.env.API_KEY || '')
-    }
+    // Injeta o polyfill de process de forma que as bibliotecas encontrem process.env.API_KEY
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
+    'process.version': JSON.stringify('v20.0.0'),
+    'process.platform': JSON.stringify('browser'),
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
+    chunkSizeWarningLimit: 1000, // Aumenta o limite para evitar o aviso do build
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'utils-vendor': ['xlsx', 'jszip', 'jspdf', 'idb']
+          'libs-vendor': ['xlsx', 'jszip', 'jspdf', 'idb', '@google/genai']
         }
       }
     }
