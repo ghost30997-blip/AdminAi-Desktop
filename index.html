@@ -11,8 +11,7 @@
       window.global = window;
       window.process = {
         env: { 
-          NODE_ENV: 'production',
-          API_KEY: "" 
+          NODE_ENV: 'production'
         },
         version: '',
         nextTick: (f) => setTimeout(f, 0)
@@ -119,7 +118,7 @@
         };
     </script>
 
-    <!-- O Vite gerencia o build a partir deste arquivo. O caminho absoluto "/" é o padrão esperado pelo Vite. -->
+    <!-- O Vite gerencia o build a partir deste arquivo. -->
     <script type="module" src="/index.tsx"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </body>

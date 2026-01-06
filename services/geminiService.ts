@@ -1,10 +1,19 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getAIInstance = () => {
-  // Tenta ler do process.env (injetado pelo Vite) ou do fallback global definido no index.html
-  const apiKey = (process.env?.API_KEY) || (window as any).process?.env?.API_KEY || '';
-  return new GoogleGenAI({ apiKey });
+  // O Vite substitui process.env.API_KEY em tempo de build.
+  // Se não houver chave, retornamos null para evitar crash no construtor do SDK.
+  const apiKey = process.env.API_KEY;
+  if (!apiKey || apiKey === "") {
+    console.warn("Gemini API Key ausente. Funcionalidades de IA estarão desativadas.");
+    return null;
+  }
+  try {
+    return new GoogleGenAI({ apiKey });
+  } catch (e) {
+    console.error("Falha ao inicializar GoogleGenAI:", e);
+    return null;
+  }
 };
 
 /**
@@ -13,6 +22,10 @@ const getAIInstance = () => {
 export const analyzeMailingFields = async (headers: string[], pptPlaceholders: string[]) => {
   try {
     const ai = getAIInstance();
+    if (!ai) {
+        return { mapping: {} };
+    }
+
     const prompt = `
       Atue como um especialista em Mala Direta.
       Planilha possui estas colunas: ${headers.join(", ")}.
@@ -54,6 +67,8 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
         const ai = getAIInstance();
+        if (!ai) return "O serviço de IA não está configurado. Por favor, adicione a API_KEY nas variáveis de ambiente da Vercel para habilitar o chat.";
+
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',
             config: {
