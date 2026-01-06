@@ -1,17 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getAIInstance = () => {
-  // O Vite substitui process.env.API_KEY em tempo de build.
-  // Se não houver chave, retornamos null para evitar crash no construtor do SDK.
+  // Tenta obter a chave do ambiente (Vite define)
   const apiKey = process.env.API_KEY;
-  if (!apiKey || apiKey === "") {
-    console.warn("Gemini API Key ausente. Funcionalidades de IA estarão desativadas.");
+  
+  if (!apiKey || apiKey === "" || apiKey === "undefined") {
     return null;
   }
+
   try {
     return new GoogleGenAI({ apiKey });
   } catch (e) {
-    console.error("Falha ao inicializar GoogleGenAI:", e);
+    console.error("Erro ao instanciar Gemini:", e);
     return null;
   }
 };
@@ -23,6 +23,7 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
   try {
     const ai = getAIInstance();
     if (!ai) {
+        console.warn("IA desativada: API_KEY não configurada.");
         return { mapping: {} };
     }
 
@@ -45,8 +46,7 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
             mapping: { 
                 type: Type.OBJECT,
                 description: "Objeto de mapeamento placeholder -> coluna"
-            },
-            confidence: { type: Type.NUMBER }
+            }
           },
           required: ["mapping"]
         }
@@ -67,12 +67,12 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
         const ai = getAIInstance();
-        if (!ai) return "O serviço de IA não está configurado. Por favor, adicione a API_KEY nas variáveis de ambiente da Vercel para habilitar o chat.";
+        if (!ai) return "Serviço de IA indisponível. Configure a API_KEY na Vercel.";
 
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',
             config: {
-                systemInstruction: "Você é o assistente do Slidex. Ajude o usuário a criar malas diretas, formatar planilhas e configurar templates de PowerPoint."
+                systemInstruction: "Você é o assistente do Slidex. Ajude o usuário a criar malas diretas."
             }
         });
         
@@ -80,6 +80,6 @@ export const assistantChat = async (history: any[], userMessage: string) => {
         return result.text || "Sem resposta.";
     } catch (e) {
         console.error("Chat Error:", e);
-        return "Desculpe, tive um problema ao processar sua mensagem.";
+        return "Erro ao processar mensagem da IA.";
     }
 };
