@@ -3,6 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 // Função para obter a instância da IA de forma segura
 const getAIInstance = () => {
+  // process.env.API_KEY é injetado via vite.config.ts define
   const apiKey = process.env.API_KEY || '';
   return new GoogleGenAI({ apiKey });
 };
@@ -34,12 +35,14 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
                 description: "Objeto de mapeamento placeholder -> coluna"
             },
             confidence: { type: Type.NUMBER }
-          }
+          },
+          required: ["mapping"]
         }
       }
     });
 
-    return JSON.parse(response.text || "{}");
+    const text = response.text;
+    return text ? JSON.parse(text) : { mapping: {} };
   } catch (error) {
     console.error("Erro na análise inteligente do Gemini:", error);
     return { mapping: {} };
@@ -60,7 +63,7 @@ export const assistantChat = async (history: any[], userMessage: string) => {
         });
         
         const result = await chat.sendMessage({ message: userMessage });
-        return result.text;
+        return result.text || "Sem resposta.";
     } catch (e) {
         console.error("Chat Error:", e);
         return "Desculpe, tive um problema ao processar sua mensagem.";

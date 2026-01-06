@@ -6,8 +6,11 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   define: {
-    // Essencial para o SDK do Gemini e bibliotecas que esperam ambiente Node
-    'process.env': process.env 
+    // Define apenas as variáveis necessárias para evitar o erro "process is not defined"
+    // e permitir que o SDK do Gemini acesse a API_KEY injetada pela plataforma.
+    'process.env': {
+      API_KEY: JSON.stringify(process.env.API_KEY || '')
+    }
   },
   build: {
     outDir: 'dist',
