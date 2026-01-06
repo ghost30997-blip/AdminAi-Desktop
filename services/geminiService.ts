@@ -1,17 +1,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getAIInstance = () => {
-  // Tenta obter a chave do ambiente (Vite define)
-  const apiKey = process.env.API_KEY;
+  // Tenta obter a chave de múltiplas fontes possíveis injetadas pelo Vite
+  const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY;
   
-  if (!apiKey || apiKey === "" || apiKey === "undefined") {
+  // Se a chave for inválida, retornamos null IMEDIATAMENTE antes de chamar o construtor do SDK
+  if (!apiKey || apiKey === "" || apiKey === "undefined" || apiKey === "null") {
+    console.warn("Slidex: Google Gemini API Key não encontrada. Funcionalidades de IA desativadas.");
     return null;
   }
 
   try {
     return new GoogleGenAI({ apiKey });
   } catch (e) {
-    console.error("Erro ao instanciar Gemini:", e);
+    console.error("Erro ao instanciar GoogleGenAI:", e);
     return null;
   }
 };
@@ -22,10 +24,7 @@ const getAIInstance = () => {
 export const analyzeMailingFields = async (headers: string[], pptPlaceholders: string[]) => {
   try {
     const ai = getAIInstance();
-    if (!ai) {
-        console.warn("IA desativada: API_KEY não configurada.");
-        return { mapping: {} };
-    }
+    if (!ai) return { mapping: {} };
 
     const prompt = `
       Atue como um especialista em Mala Direta.
@@ -67,7 +66,7 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
         const ai = getAIInstance();
-        if (!ai) return "Serviço de IA indisponível. Configure a API_KEY na Vercel.";
+        if (!ai) return "Serviço de IA indisponível. Por favor, configure a VITE_API_KEY no painel da Vercel.";
 
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',
