@@ -1,3 +1,4 @@
+
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 
@@ -8,26 +9,28 @@ function createWindow() {
     minWidth: 1024,
     minHeight: 768,
     title: "Slidex - Mala Direta Profissional",
-    icon: path.join(__dirname, 'public', 'icon.ico'),
     backgroundColor: '#172B4D',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
-      // Essencial para carregar bibliotecas externas (esm.sh) junto com arquivos locais
+      // Essencial para carregar recursos da pasta dist via file://
       webSecurity: false,
       allowRunningInsecureContent: true
     },
     autoHideMenuBar: true
   });
 
-  // Abre ferramentas de desenvolvedor se o app falhar ao carregar o conteúdo React
-  win.webContents.on('did-fail-load', () => {
+  // Em desenvolvimento, carrega do localhost do Vite
+  // Em produção (Vercel/Instalado), carrega o arquivo index.html da pasta dist
+  const isDev = !app.isPackaged;
+  
+  if (isDev) {
+    win.loadURL('http://localhost:5173');
     win.webContents.openDevTools();
-  });
-
-  // Carrega o index.html usando caminho absoluto resiliente
-  win.loadFile(path.join(__dirname, 'index.html'));
+  } else {
+    // Carrega o arquivo transpilado final
+    win.loadFile(path.join(__dirname, 'dist', 'index.html'));
+  }
 
   // Garante que links externos (Google Drive, etc) abram no navegador padrão
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -36,7 +39,6 @@ function createWindow() {
   });
 }
 
-// Singleton: Evita abrir o app várias vezes no Windows
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {

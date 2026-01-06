@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ProgressBar } from './ProgressBar';
 import { StepUpload } from './StepUpload';
@@ -9,7 +10,7 @@ import { loadPresentation, base64ToBlob } from '../utils/fileProcessor';
 import { getTemplates } from '../utils/storage';
 import { uploadFileToDrive, isGoogleConnected, requestGoogleLogin } from '../services/google';
 import { analyzeMailingFields } from '../services/geminiService';
-import { Upload, FileText, LayoutTemplate, Globe, Loader2, Sparkles, Monitor } from 'lucide-react';
+import { Upload, FileText, LayoutTemplate, Globe, Loader2, Sparkles, Monitor, ArrowRight } from 'lucide-react';
 
 export const ModuleCertificates: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.UPLOAD_DATA);
@@ -20,16 +21,14 @@ export const ModuleCertificates: React.FC = () => {
   const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
   const [isUploadingToGoogle, setIsUploadingToGoogle] = useState(false);
 
-  // Executa análise IA quando o template é carregado
   const autoMapFields = async (pptData: PresentationData) => {
       if (headers.length === 0) return;
       setIsAiAnalyzing(true);
       try {
-          // Placeholder fictício: na vida real, extraímos as tags {{...}} do pptData
           const res = await analyzeMailingFields(headers, ["nome", "data", "curso", "cpf"]);
           if (res.mapping) setFieldMapping(res.mapping);
       } catch (e) {
-          console.warn("IA Mapping falhou, usando fallback.");
+          console.warn("IA Mapping falhou.");
       } finally {
           setIsAiAnalyzing(false);
       }
@@ -102,30 +101,29 @@ export const ModuleCertificates: React.FC = () => {
                 {currentStep === AppStep.UPLOAD_TEMPLATE && (
                     <div className="flex-1 flex flex-col p-6 md:p-10 animate-fade-in h-full overflow-y-auto">
                         <div className="max-w-4xl w-full mx-auto text-center">
-                            <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-4">Escolha o Template PowerPoint</h2>
-                            <p className="text-slate-500 dark:text-slate-400 mb-12">Selecione um arquivo local ou use o Google Slides para preparar seu modelo.</p>
+                            <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-4">Mala Direta PowerPoint</h2>
+                            <p className="text-slate-500 dark:text-slate-400 mb-12">Combine sua planilha com um modelo de PowerPoint. Abra no Google Slides para edição rápida se necessário.</p>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <label className="group p-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl cursor-pointer hover:border-brand-blue hover:bg-blue-50/30 dark:hover:bg-slate-800 transition-all">
                                     <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                                         <Upload className="text-brand-blue" size={32}/>
                                     </div>
-                                    <h3 className="font-bold text-lg text-slate-800 dark:text-white">Upload de .pptx</h3>
-                                    <p className="text-xs text-slate-400 mt-2">Arraste ou clique para selecionar do computador</p>
+                                    <h3 className="font-bold text-lg text-slate-800 dark:text-white">Selecionar .pptx Local</h3>
+                                    <p className="text-xs text-slate-400 mt-2">Usar arquivo do seu computador</p>
                                     <input type="file" className="hidden" accept=".pptx" onChange={(e) => e.target.files && processPptxFile(e.target.files[0])} />
                                 </label>
 
-                                <button 
+                                <div 
                                     onClick={handleOpenInGoogle}
-                                    disabled={isUploadingToGoogle}
-                                    className="group p-8 border-2 border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 rounded-3xl hover:shadow-xl transition-all disabled:opacity-50"
+                                    className="group p-8 border-2 border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 rounded-3xl hover:shadow-xl transition-all cursor-pointer flex flex-col items-center justify-center"
                                 >
                                     <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                                         {isUploadingToGoogle ? <Loader2 className="animate-spin text-brand-orange" size={32}/> : <Globe className="text-brand-orange" size={32}/>}
                                     </div>
                                     <h3 className="font-bold text-lg text-slate-800 dark:text-white">Abrir no Google Slides</h3>
-                                    <p className="text-xs text-slate-400 mt-2">Edite seu template na nuvem antes de gerar</p>
-                                </button>
+                                    <p className="text-xs text-slate-400 mt-2">Editar template na nuvem (Google Drive)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -135,10 +133,8 @@ export const ModuleCertificates: React.FC = () => {
                     <div className="flex-1 flex flex-col h-full relative">
                         {isAiAnalyzing && (
                             <div className="absolute inset-0 z-50 bg-white/80 dark:bg-slate-900/80 flex flex-col items-center justify-center">
-                                <div className="p-4 bg-white dark:bg-slate-800 rounded-full shadow-2xl mb-4">
-                                    <Sparkles className="text-brand-orange animate-pulse" size={48} />
-                                </div>
-                                <p className="font-black text-slate-700 dark:text-white uppercase tracking-widest text-sm">Mapeamento Inteligente Gemini...</p>
+                                <Sparkles className="text-brand-orange animate-pulse mb-4" size={48} />
+                                <p className="font-black text-slate-700 dark:text-white tracking-widest text-sm">MAPEANDO CAMPOS COM IA...</p>
                             </div>
                         )}
                         <StepEditor 
