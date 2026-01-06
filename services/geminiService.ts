@@ -1,19 +1,23 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
+/**
+ * Obtém a instância do Google GenAI de forma segura.
+ * O SDK do Google lança um erro fatal se a chave for undefined ou vazia no browser.
+ */
 const getAIInstance = () => {
-  // Tenta obter a chave de múltiplas fontes possíveis injetadas pelo Vite
-  const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY;
-  
-  // Se a chave for inválida, retornamos null IMEDIATAMENTE antes de chamar o construtor do SDK
-  if (!apiKey || apiKey === "" || apiKey === "undefined" || apiKey === "null") {
-    console.warn("Slidex: Google Gemini API Key não encontrada. Funcionalidades de IA desativadas.");
-    return null;
-  }
-
   try {
+    // Tenta obter de process.env (Vite define) ou import.meta.env
+    const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY;
+    
+    // Verificação rigorosa para evitar instanciar sem chave válida
+    if (!apiKey || typeof apiKey !== 'string' || apiKey.trim() === "" || apiKey === "undefined" || apiKey === "null") {
+      return null;
+    }
+
+    // Instancia apenas se tivermos uma string não vazia
     return new GoogleGenAI({ apiKey });
   } catch (e) {
-    console.error("Erro ao instanciar GoogleGenAI:", e);
+    console.error("Slidex: Falha crítica ao inicializar Gemini SDK:", e);
     return null;
   }
 };
@@ -24,7 +28,10 @@ const getAIInstance = () => {
 export const analyzeMailingFields = async (headers: string[], pptPlaceholders: string[]) => {
   try {
     const ai = getAIInstance();
-    if (!ai) return { mapping: {} };
+    if (!ai) {
+      console.warn("Slidex: IA inativa (Chave Ausente).");
+      return { mapping: {} };
+    }
 
     const prompt = `
       Atue como um especialista em Mala Direta.
@@ -66,7 +73,7 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
         const ai = getAIInstance();
-        if (!ai) return "Serviço de IA indisponível. Por favor, configure a VITE_API_KEY no painel da Vercel.";
+        if (!ai) return "O assistente de IA está desativado. Verifique a variável VITE_API_KEY na Vercel.";
 
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',

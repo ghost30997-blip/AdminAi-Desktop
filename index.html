@@ -6,12 +6,13 @@
     <title>Slidex | Mala Direta Profissional Web</title>
     <meta name="description" content="Automação de documentos PowerPoint e Word com IA e integração Google Drive.">
     
-    <!-- Polyfill essencial para bibliotecas que dependem de ambiente Node -->
+    <!-- Polyfill essencial para evitar erros de 'process is not defined' e 'API Key' -->
     <script>
       window.global = window;
       window.process = {
         env: { 
-          NODE_ENV: 'production'
+          NODE_ENV: 'production',
+          API_KEY: '' 
         },
         version: '',
         nextTick: (f) => setTimeout(f, 0)
@@ -82,8 +83,8 @@
     "jspdf": "https://esm.sh/jspdf@^4.0.0",
     "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7",
     "idb": "https://esm.sh/idb@^8.0.3",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.0"
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
@@ -113,7 +114,7 @@
             const loader = document.getElementById('app-loader');
             if(loader) {
                 const p = loader.querySelector('p');
-                if(p) p.innerHTML = "Erro crítico de carregamento. Verifique o console.";
+                if(p) p.innerHTML = "Erro de carregamento. Verifique a API Key no painel da Vercel.";
             }
         };
     </script>
