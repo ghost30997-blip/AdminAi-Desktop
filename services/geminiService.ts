@@ -1,10 +1,9 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Função para obter a instância da IA de forma segura
 const getAIInstance = () => {
-  // O Vite injeta o valor de API_KEY durante o build via define
-  const apiKey = process.env.API_KEY || (window as any).process?.env?.API_KEY || '';
+  // Tenta ler do process.env (injetado pelo Vite) ou do fallback global definido no index.html
+  const apiKey = (process.env?.API_KEY) || (window as any).process?.env?.API_KEY || '';
   return new GoogleGenAI({ apiKey });
 };
 

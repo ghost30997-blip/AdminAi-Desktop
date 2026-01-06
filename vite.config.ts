@@ -6,22 +6,23 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   define: {
-    // Injeta o polyfill de process de forma que as bibliotecas encontrem process.env.API_KEY
+    // Substitui variáveis de ambiente por literais de string durante o build para o SDK do Gemini
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
-    'process.version': JSON.stringify('v20.0.0'),
-    'process.platform': JSON.stringify('browser'),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
-    chunkSizeWarningLimit: 1000, // Aumenta o limite para evitar o aviso do build
+    chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'libs-vendor': ['xlsx', 'jszip', 'jspdf', 'idb', '@google/genai']
+          'vendor': ['react', 'react-dom'],
+          'utils-xlsx': ['xlsx'],
+          'utils-pdf': ['jspdf', 'jspdf-autotable'],
+          'utils-zip': ['jszip']
         }
       }
     }
