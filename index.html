@@ -7,14 +7,13 @@
     <title>Slidex | Mala Direta Profissional Web</title>
     <meta name="description" content="Automação de documentos PowerPoint e Word com IA e integração Google Drive.">
     
-    <!-- Polyfill crucial para evitar erro 'process is not defined' no navegador -->
+    <!-- Polyfill global para compatibilidade com bibliotecas que esperam ambiente Node (como o SDK do Gemini) -->
     <script>
       window.global = window;
-      window.process = window.process || {
-        env: { API_KEY: "" },
-        version: 'v20.0.0',
-        platform: 'browser',
-        nextTick: function(f) { setTimeout(f, 0); }
+      window.process = {
+        env: { NODE_ENV: 'production' },
+        version: '',
+        nextTick: (f) => setTimeout(f, 0)
       };
     </script>
 
@@ -76,12 +75,12 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
-    "jszip": "https://esm.sh/jszip@^3.10.1",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "jszip": "https://esm.sh/jszip@^3.10.1",
     "jspdf": "https://esm.sh/jspdf@^4.0.0",
-    "xlsx": "https://esm.sh/xlsx@^0.18.5",
     "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7",
     "idb": "https://esm.sh/idb@^8.0.3",
+    "xlsx": "https://esm.sh/xlsx@^0.18.5",
     "vite": "https://esm.sh/vite@^7.3.0",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
@@ -113,13 +112,13 @@
             const loader = document.getElementById('app-loader');
             if(loader) {
                 const p = loader.querySelector('p');
-                if(p) p.innerHTML = "Erro de inicialização.<br><small style='opacity:0.6'>Verifique o console para mais detalhes.</small>";
+                if(p) p.innerHTML = "Erro de carregamento. Verifique a conexão.";
             }
         };
     </script>
 
-    <!-- O Vite gerencia o build a partir deste arquivo -->
-    <script type="module" src="/index.tsx"></script>
+    <!-- O Vite gerencia o build a partir deste arquivo. O caminho './' é mais resiliente no deploy. -->
+    <script type="module" src="./index.tsx"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </body>
 </html>

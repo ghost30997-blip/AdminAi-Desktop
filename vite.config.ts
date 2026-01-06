@@ -6,23 +6,25 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   define: {
-    // Substitui variáveis de ambiente por literais de string durante o build para o SDK do Gemini
+    // Injeta a API_KEY diretamente no código durante o build
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+    // Garante que referências globais a 'process' não quebrem no browser
+    'process.browser': true,
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
-    chunkSizeWarningLimit: 2000,
+    chunkSizeWarningLimit: 2500,
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom'],
-          'utils-xlsx': ['xlsx'],
-          'utils-pdf': ['jspdf', 'jspdf-autotable'],
-          'utils-zip': ['jszip']
+          'react-core': ['react', 'react-dom'],
+          'ui-libs': ['lucide-react'],
+          'document-libs': ['xlsx', 'jszip', 'jspdf', 'jspdf-autotable'],
+          'ai-sdk': ['@google/genai']
         }
       }
     }
