@@ -6,10 +6,9 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   define: {
-    // Injeta a API_KEY diretamente no código durante o build
+    // Injeta a API_KEY e configurações de ambiente diretamente no código compilado
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-    // Garante que referências globais a 'process' não quebrem no browser
     'process.browser': true,
   },
   build: {
@@ -17,14 +16,13 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
-    chunkSizeWarningLimit: 2500,
+    chunkSizeWarningLimit: 3000, // Aumenta o limite para silenciar avisos de chunks grandes
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-core': ['react', 'react-dom'],
-          'ui-libs': ['lucide-react'],
-          'document-libs': ['xlsx', 'jszip', 'jspdf', 'jspdf-autotable'],
-          'ai-sdk': ['@google/genai']
+          'react-vendor': ['react', 'react-dom'],
+          'document-tools': ['xlsx', 'jszip', 'jspdf', 'jspdf-autotable'],
+          'gemini-api': ['@google/genai']
         }
       }
     }
