@@ -4,7 +4,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // Padrão para hospedagem na Web (Vercel)
+  base: '/',
+  define: {
+    // Essencial para o SDK do Gemini e bibliotecas que esperam ambiente Node
+    'process.env': process.env 
+  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -13,8 +17,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-core': ['react', 'react-dom'],
-          'document-utils': ['xlsx', 'jszip', 'jspdf', 'jspdf-autotable']
+          'react-vendor': ['react', 'react-dom'],
+          'utils-vendor': ['xlsx', 'jszip', 'jspdf', 'idb']
         }
       }
     }

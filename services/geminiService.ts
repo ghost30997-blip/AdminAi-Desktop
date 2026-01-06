@@ -1,15 +1,18 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { DataRow } from "../types";
 
-// Inicialização segura usando a chave de ambiente injetada pela Vercel ou Electron
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { GoogleGenAI, Type } from "@google/genai";
+
+// Função para obter a instância da IA de forma segura
+const getAIInstance = () => {
+  const apiKey = process.env.API_KEY || '';
+  return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Analisa as colunas da planilha e sugere o melhor mapeamento para o PowerPoint.
- * Utiliza o modelo gemini-3-flash-preview para velocidade e precisão em extração de dados.
  */
 export const analyzeMailingFields = async (headers: string[], pptPlaceholders: string[]) => {
   try {
+    const ai = getAIInstance();
     const prompt = `
       Atue como um especialista em Mala Direta.
       Planilha possui estas colunas: ${headers.join(", ")}.
@@ -36,7 +39,6 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
       }
     });
 
-    // Acessa a propriedade .text diretamente conforme diretriz
     return JSON.parse(response.text || "{}");
   } catch (error) {
     console.error("Erro na análise inteligente do Gemini:", error);
@@ -49,6 +51,7 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
  */
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
+        const ai = getAIInstance();
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',
             config: {
