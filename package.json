@@ -39,11 +39,12 @@
       "preload.js"
     ],
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "public"
     },
     "win": {
       "target": "nsis",
-      "icon": "public/icon.ico"
+      "icon": "public/icon.png"
     }
   }
 }
