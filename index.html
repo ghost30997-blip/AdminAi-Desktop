@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -12,7 +13,7 @@
       window.process = {
         env: { 
           NODE_ENV: 'production',
-          API_KEY: '' 
+          API_KEY: '' // Será injetado pelo ambiente ou vite.config.ts
         },
         version: '',
         nextTick: (f) => setTimeout(f, 0)
@@ -69,6 +70,25 @@
       }
       @keyframes spin { to { transform: rotate(360deg); } }
       .loaded #app-loader { opacity: 0; pointer-events: none; }
+
+      /* Custom scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
     </style>
   <script type="importmap">
 {
@@ -114,7 +134,7 @@
             const loader = document.getElementById('app-loader');
             if(loader) {
                 const p = loader.querySelector('p');
-                if(p) p.innerHTML = "Erro de carregamento. Verifique a API Key no painel da Vercel.";
+                if(p) p.innerHTML = "Erro crítico de inicialização. Verifique o console do navegador.";
             }
         };
     </script>

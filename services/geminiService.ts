@@ -1,43 +1,23 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 
 /**
- * Obtém a instância do Google GenAI de forma segura.
- * O SDK do Google lança um erro fatal se a chave for undefined ou vazia no browser.
- */
-const getAIInstance = () => {
-  try {
-    // Tenta obter de process.env (Vite define) ou import.meta.env
-    const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY;
-    
-    // Verificação rigorosa para evitar instanciar sem chave válida
-    if (!apiKey || typeof apiKey !== 'string' || apiKey.trim() === "" || apiKey === "undefined" || apiKey === "null") {
-      return null;
-    }
-
-    // Instancia apenas se tivermos uma string não vazia
-    return new GoogleGenAI({ apiKey });
-  } catch (e) {
-    console.error("Slidex: Falha crítica ao inicializar Gemini SDK:", e);
-    return null;
-  }
-};
-
-/**
  * Analisa as colunas da planilha e sugere o melhor mapeamento para o PowerPoint.
+ * Usa o modelo gemini-3-flash-preview para tarefas de texto básicas.
  */
 export const analyzeMailingFields = async (headers: string[], pptPlaceholders: string[]) => {
   try {
-    const ai = getAIInstance();
-    if (!ai) {
-      console.warn("Slidex: IA inativa (Chave Ausente).");
-      return { mapping: {} };
-    }
-
+    // Inicialização direta conforme diretrizes
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+    
     const prompt = `
-      Atue como um especialista em Mala Direta.
-      Planilha possui estas colunas: ${headers.join(", ")}.
-      O PowerPoint possui estes placeholders: ${pptPlaceholders.join(", ")}.
-      Crie um mapeamento JSON onde a chave é o placeholder e o valor é a coluna correspondente mais provável.
+      Atue como um especialista em automação de documentos e Mala Direta.
+      A planilha de dados possui estas colunas (cabeçalhos): ${headers.join(", ")}.
+      O modelo de PowerPoint possui estes marcadores (placeholders): ${pptPlaceholders.join(", ")}.
+      
+      Sua tarefa é criar um mapeamento lógico entre os marcadores do PowerPoint e as colunas da planilha.
+      Retorne um JSON onde a chave é o nome do marcador (sem as chaves {{}}) e o valor é o nome da coluna correspondente na planilha.
+      Apenas mapeie se houver uma correspondência clara ou semântica (ex: "Nome do Aluno" mapeia para "nome").
     `;
 
     const response = await ai.models.generateContent({
@@ -68,24 +48,23 @@ export const analyzeMailingFields = async (headers: string[], pptPlaceholders: s
 };
 
 /**
- * Chat de suporte operacional inteligente.
+ * Assistente de suporte operacional para tirar dúvidas sobre o processo de Mala Direta.
  */
 export const assistantChat = async (history: any[], userMessage: string) => {
     try {
-        const ai = getAIInstance();
-        if (!ai) return "O assistente de IA está desativado. Verifique a variável VITE_API_KEY na Vercel.";
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
         const chat = ai.chats.create({ 
             model: 'gemini-3-flash-preview',
             config: {
-                systemInstruction: "Você é o assistente do Slidex. Ajude o usuário a criar malas diretas."
+                systemInstruction: "Você é o Slidex AI, um assistente especializado em automação de documentos PowerPoint e Word via Mala Direta. Ajude o usuário com dúvidas técnicas sobre formatação, placeholders {{campo}} e integração com Google Drive."
             }
         });
         
         const result = await chat.sendMessage({ message: userMessage });
-        return result.text || "Sem resposta.";
+        return result.text || "Desculpe, não consegui processar sua mensagem agora.";
     } catch (e) {
         console.error("Chat Error:", e);
-        return "Erro ao processar mensagem da IA.";
+        return "Houve um erro ao conectar com a inteligência artificial. Verifique sua chave de API.";
     }
 };
