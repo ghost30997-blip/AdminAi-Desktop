@@ -1,11 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { Building2, Save, Upload, Image as ImageIcon, Database } from 'lucide-react';
 import { getSettings, saveSettings } from '../utils/storage';
 import { SystemSettings } from '../types';
 import { fileToBase64 } from '../utils/fileProcessor';
 
-export const ModuleAdmin: React.FC = () => {
+interface ModuleAdminProps {
+    onLogoUpdate: (logo?: string) => void;
+}
+
+export const ModuleAdmin: React.FC<ModuleAdminProps> = ({ onLogoUpdate }) => {
   const [settings, setSettings] = useState<SystemSettings>({
       companyName: '', cnpj: '', email: '', themeColor: 'blue', crmColumns: []
   });
@@ -19,6 +22,7 @@ export const ModuleAdmin: React.FC = () => {
   const handleSaveSettings = () => {
       setLoading(true);
       saveSettings(settings);
+      onLogoUpdate(settings.logo); // Update logo state in App.tsx
       setTimeout(() => {
           setLoading(false);
           alert("Configurações salvas!");

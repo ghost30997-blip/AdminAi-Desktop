@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ModuleCertificates } from './components/ModuleCertificates';
@@ -36,11 +35,6 @@ const App: React.FC = () => {
       });
   }, []);
 
-  useEffect(() => {
-      const settings = getSettings();
-      if(settings) setAppLogo(settings.logo);
-  }, [activeModule]);
-
   const toggleTheme = () => {
       setIsDarkMode(!isDarkMode);
   };
@@ -56,7 +50,7 @@ const App: React.FC = () => {
       case AppModule.CONTRACTS: return <ModuleContracts />;
       case AppModule.ATTENDANCE: return <ModuleAttendance />;
       case AppModule.TEMPLATES: return <ModuleTemplates />;
-      case AppModule.ADMIN: return <ModuleAdmin />;
+      case AppModule.ADMIN: return <ModuleAdmin onLogoUpdate={setAppLogo} />; // Passando setAppLogo
       case AppModule.WHATSAPP: return <PlaceholderModule title="Automação WhatsApp" icon={MessageSquare} />;
       default: return <ModuleCertificates />;
     }
